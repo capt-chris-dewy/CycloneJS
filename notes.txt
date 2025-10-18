@@ -1,0 +1,4 @@
+how to incorporate multiple js files referencing one another
+
+Important: The type="module" in the <script> tag tells the browser that you're using ES6 modules, enabling 
+import/export syntax.
