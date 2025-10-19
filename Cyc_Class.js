@@ -61,7 +61,9 @@ export class LEDRing {
       this.LED_Array = []; 
       
       this.min_distance = 8;
-    
+      this.cw_dist = 0;
+      this.ccw_dist = 0;
+  
       this.activeIndex = 0; //the index of the LED currently lit during the play of the game
       this.seedIndex = 0;
   }
@@ -92,16 +94,16 @@ export class LEDRing {
       temp_array.splice(randomIndex, 1); //praying
     }
     
-    console.log(this.seed_Array);  
+    //console.log(this.seed_Array);  
+  }
+
+  initiateSeed() {
+    //at the start, initiate to the first position
+    this.LED_Array[this.seedIndex].on();
+    this.seedIndex = this.seedIndex + 1;
   }
 
   nextInSeed() {
-    //at the start, initiate to the first position
-    if(this.seedIndex == 0) {
-      this.LED_Array[this.seedIndex].on();
-      this.seedIndex = this.seedIndex + 1;
-    }
-
     this.LED_Array[this.activeIndex].off();
     if(this.seedIndex == this.number) { //this condition actually implies the user has one, I believe
       return;
@@ -114,6 +116,61 @@ export class LEDRing {
 
     //testing to see if it hits all the correct positions
     //console.log(this.seedIndex); //gets up to 48
+  }
+
+  shift() {
+    this.LED_Array[this.activeIndex].off();
+    let nextIndex = 0;
+    if(this.direction == "CW") {
+      if(this.activeIndex == 0) {
+        nextIndex = this.number - 1; //roll over from index 0 to index N-1
+      } else {
+        nextIndex = this.activeIndex - 1;
+      }
+    } else if(this.direction == "CCW") {
+      if(this.activeIndex == (this.number - 1)) {
+        nextIndex == 0; //roll over from N-1 back to 0 (I hope)
+      } else {
+        nextIndex = this.activeIndex + 1; 
+      }
+    } else {
+      console.log("something went wrong -- direction variable not CW or CCW");
+    }
+
+    this.activeIndex = nextIndex;
+    this.LED_Array[this.activeIndex].on(); 
+  }
+
+  shortestPath(targetIndex) {
+    let currentIndex = this.activeIndex;
+    let CW_Distance = 0;
+    let CCW_Distance = 0; //increasing index, based on how LEDs are generated with increasing angle from x-axis "0 degrees"
+    let highestIndex = this.number - 1;
+
+    if(targetIndex > currentIndex) {
+      CW_Distance = Math.abs(currentIndex + (highestIndex-targetIndex)); //roll over from 0, back to 47 -- could be shorter
+      CCW_Distance = Math.abs(targetIndex - currentIndex);
+    }
+    
+    if(targetIndex < currentIndex) {
+      CW_Distance = Math.abs(targetIndex - currentIndex);
+      CCW_Distance = Math.abs(targetIndex + (highestIndex-currentIndex)); //roll over from 0, back to 47 -- could be shorter
+    }
+
+    console.log(CW_Distance);
+    console.log(CCW_Distance);
+
+    this.cw_dist = CW_Distance;
+    this.ccw_dist = CCW_Distance;
+
+  }
+
+  changeDirectionShortest() {
+    if(this.cw_dist < this.ccw_dist) {
+      this.direction = "CW";
+    } else {
+      this.direction = "CCW";
+    }
   }
 
   generateLEDs() {
@@ -163,5 +220,9 @@ export class LEDRing {
     for(var i = 0; i < this.number; i++) {
       this.LED_Array[i].drawLED();
     }
+  }
+
+  getActiveIndex() {
+    return this.activeIndex;
   }
 }

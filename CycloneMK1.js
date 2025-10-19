@@ -104,7 +104,7 @@ window.setup = function() {
  
   //comment so this thing updates? 
   GAME_RING.generateSeed();
-
+  GAME_RING.initiateSeed();
 }
 
 window.draw = function() {
@@ -116,8 +116,16 @@ window.draw = function() {
   if(drawCounts % parseInt(BLINK_PERIOD_DRAWS/2) == 0) {
     //console.log("toggle all");  
     //GAME_RING.blinkAll();
-    GAME_RING.nextInSeed();
-    USER_RING.blinkAll();
+    //GAME_RING.nextInSeed();
+    USER_RING.shift();
+
+    if(GAME_RING.getActiveIndex() == USER_RING.getActiveIndex()) {
+      console.log("aligned, next");
+      GAME_RING.nextInSeed();
+      USER_RING.shortestPath(GAME_RING.getActiveIndex());
+      USER_RING.changeDirectionShortest();
+    }
+    //USER_RING.blinkAll();
   }
     
 	drawCounts++;
