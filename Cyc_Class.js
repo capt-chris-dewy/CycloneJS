@@ -10,15 +10,15 @@ export class LED {
     this.lit = 0;
   }
 
-  on(target_index) {
+  on() {
     this.lit = 1;
   }
   
-  off(target_index) {
+  off() {
     this.lit = 0;
   }
   
-  toggle(target_index) {
+  toggle() {
     if(this.lit == 0) {
       this.lit = 1;
     } else {
@@ -55,7 +55,65 @@ export class LEDRing {
       this.angle_radians = this.angle_spacing * (Math.PI/180.0);
       this.ring_radius = (this.arc_separation + 2*this.LED_radius)/(this.angle_radians);
 
+      this.direction = "CW"; //alternative is "CCW"
+
+      this.seed_Array = [];
       this.LED_Array = []; 
+      
+      this.min_distance = 8;
+    
+      this.activeIndex = 0; //the index of the LED currently lit during the play of the game
+      this.seedIndex = 0;
+  }
+
+  generateSeed() {
+    let randomIndex = 0;
+    let chosenValue = 0;
+    let previousValue = 0;
+    let currentLength = 0;
+    let distance = 0;
+    let temp_array = [];
+    //fill with 0-47
+    for(var i = 0; i < this.number; i++) {
+      temp_array.push(i);
+    }
+    
+    while(temp_array.length > 0) {
+      randomIndex = Math.floor(temp_array.length*Math.random());
+      currentLength = this.seed_Array.length;
+      previousValue = this.seed_Array[currentLength - 1];
+      chosenValue = temp_array[randomIndex];
+      distance = Math.abs(chosenValue - previousValue);
+      if(distance < this.min_distance) { //select a new random value if distance is "unfair"
+        continue;
+      }
+
+      this.seed_Array.push(chosenValue);
+      temp_array.splice(randomIndex, 1); //praying
+    }
+    
+    console.log(this.seed_Array);  
+  }
+
+  nextInSeed() {
+    //at the start, initiate to the first position
+    if(this.seedIndex == 0) {
+      this.LED_Array[this.seedIndex].on();
+      this.seedIndex = this.seedIndex + 1;
+    }
+
+    this.LED_Array[this.activeIndex].off();
+    if(this.seedIndex == this.number) { //this condition actually implies the user has one, I believe
+      return;
+    } 
+    
+    let nextIndex = this.seed_Array[this.seedIndex];
+    this.LED_Array[nextIndex].on(); 
+    this.activeIndex = nextIndex;
+    this.seedIndex = this.seedIndex + 1;
+
+    //testing to see if it hits all the correct positions
+    //console.log(this.seedIndex); //gets up to 48
   }
 
   generateLEDs() {
@@ -97,7 +155,7 @@ export class LEDRing {
 
   blinkAll() {
     for(var i = 0; i < this.number; i++) {
-      this.LED_Array[i].toggle(i);
+      this.LED_Array[i].toggle();
     }
   }
   

@@ -1,0 +1,22 @@
+ideas:
+
+//"generate LEDs" -- creates a bunch of turned off LED objects
+//"generateSeed" -- given a number of LEDs, assigns the order they should blink in with some rules for spacing.
+//"loop through seed" -- targets an index, turns off previous and turns that one on
+//for now, a function can be called at regular intervals to show this pattern get looped through,
+//but in reality this would only be called to shift to the next position after a successful hit
+
+//at the time of hitting the 'space bar', or some other key
+//immediately check LED States in one ring against the other -- if incorrect, game over
+//if correct, decrement counter by 1, set "game ring" to next position in seed
+
+//theory of the user ring -- still a "set next state" argument as with the game ring, but updated regularly
+//on purpose -- based on direction you know whether to increment/decrement index of next light to turn on / off
+//special case: if you're at 47 (or N-1) and increasing in index, you have to roll over, or vice versa if you're
+//at 0 and the direction is decreasing index
+
+//program flow:
+//one large loop -- apparently when a keypress is detected, that code runs synchronously, i.e. draw isn't going anymore...
+
+//in my own future code for implementing this elsewhere: I'm thinking that button press is quick, and the user would likely
+//release it -- this would have to be registered somehow

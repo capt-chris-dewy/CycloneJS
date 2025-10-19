@@ -1,0 +1,30 @@
+  
+//first implementation of this algorithm, but I think the better approach is to simply
+//create an array of all the numbers, and generate a random index after you remove the previous
+//one
+
+generateSeed() {
+    let randomInt = 0;
+    /*for(var i = 0; i < 1000; i++) {
+      randomInt = Math.floor(this.number*Math.random());
+      console.log(randomInt);
+    }*/
+    let alreadyGenerated = false; //a flag that the number has already been generated in the array
+    while(this.seed_Array.length < 48) {
+      randomInt = Math.floor(this.number*Math.random());
+      
+      for(var i = 0; i < this.seed_Array.length; i++) {
+        if(seed_Array[i] == randomInt) {
+          alreadyGenerated = true;
+        }
+      }
+
+      if(alreadyGenerated == true) {
+        continue; //generate a new number as the first didn't work
+        alreadyGenerated = false;
+      }
+
+       
+    }
+  }
+
