@@ -114,6 +114,8 @@ export class LEDRing {
     this.activeIndex = nextIndex;
     this.seedIndex = this.seedIndex + 1;
 
+    //console.log(this.activeIndex);
+
     //testing to see if it hits all the correct positions
     //console.log(this.seedIndex); //gets up to 48
   }
@@ -121,13 +123,13 @@ export class LEDRing {
   shift() {
     this.LED_Array[this.activeIndex].off();
     let nextIndex = 0;
-    if(this.direction == "CW") {
+    if(this.direction == "CCW") {
       if(this.activeIndex == 0) {
         nextIndex = this.number - 1; //roll over from index 0 to index N-1
       } else {
         nextIndex = this.activeIndex - 1;
       }
-    } else if(this.direction == "CCW") {
+    } else if(this.direction == "CW") {
       if(this.activeIndex == (this.number - 1)) {
         nextIndex == 0; //roll over from N-1 back to 0 (I hope)
       } else {
@@ -139,6 +141,8 @@ export class LEDRing {
 
     this.activeIndex = nextIndex;
     this.LED_Array[this.activeIndex].on(); 
+    
+    //console.log(this.activeIndex);
   }
 
   shortestPath(targetIndex) {
@@ -147,18 +151,24 @@ export class LEDRing {
     let CCW_Distance = 0; //increasing index, based on how LEDs are generated with increasing angle from x-axis "0 degrees"
     let highestIndex = this.number - 1;
 
+    //actually an important note! due to the setup of the coordinates, everything is actually flipped -- what i thought was
+    //CW is actually CCW and vice versa, because origin is at top left of screen
+    //however as of me typing this, the shortest path logic works well, so treading lightly
+    //flipped all the labels on the distance variables below and praying...
+    //had to do this for shift logic above as well
+
     if(targetIndex > currentIndex) {
-      CW_Distance = Math.abs(currentIndex + (highestIndex-targetIndex)); //roll over from 0, back to 47 -- could be shorter
-      CCW_Distance = Math.abs(targetIndex - currentIndex);
+      CCW_Distance = Math.abs(currentIndex + (highestIndex-targetIndex)); //roll over from 0, back to 47 -- could be shorter
+      CW_Distance = Math.abs(targetIndex - currentIndex);
     }
     
     if(targetIndex < currentIndex) {
-      CW_Distance = Math.abs(targetIndex - currentIndex);
-      CCW_Distance = Math.abs(targetIndex + (highestIndex-currentIndex)); //roll over from 0, back to 47 -- could be shorter
+      CCW_Distance = Math.abs(targetIndex - currentIndex);
+      CW_Distance = Math.abs(targetIndex + (highestIndex-currentIndex)); //roll over from 0, back to 47 -- could be shorter
     }
 
-    console.log(CW_Distance);
-    console.log(CCW_Distance);
+    //console.log(CW_Distance);
+    //console.log(CCW_Distance);
 
     this.cw_dist = CW_Distance;
     this.ccw_dist = CCW_Distance;
@@ -224,5 +234,9 @@ export class LEDRing {
 
   getActiveIndex() {
     return this.activeIndex;
+  }
+  
+  getDirection() {
+    return this.direction;
   }
 }

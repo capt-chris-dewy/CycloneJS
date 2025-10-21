@@ -53,11 +53,23 @@ var START_BCKD_COLOR = '#c25904';
 var USER_RING;
 var GAME_RING;
 
+var SUCCESS = false;
+
 //intended callback function for when spacebar is pressed
 window.keyPressed = function() {
   if (key === ' ') {
-    console.log('Spacebar was pressed');
-    // This won't pause draw(), but if it takes long, it could cause lag
+    if(GAME_RING.getActiveIndex() == USER_RING.getActiveIndex()) {
+      //console.log("success");
+      SUCCESS = true;
+    } else {
+      //SUCCESS = false;
+      
+      //case 1 failure: the button has been selected at the wrong time, user input directly ends game
+      console.log("failure");
+      //console.log(GAME_RING.getActiveIndex());
+      //console.log(USER_RING.getActiveIndex());
+    }
+    
   }
 }
 
@@ -119,11 +131,57 @@ window.draw = function() {
     //GAME_RING.nextInSeed();
     USER_RING.shift();
 
-    if(GAME_RING.getActiveIndex() == USER_RING.getActiveIndex()) {
-      console.log("aligned, next");
-      GAME_RING.nextInSeed();
-      USER_RING.shortestPath(GAME_RING.getActiveIndex());
-      USER_RING.changeDirectionShortest();
+    //console.log(USER_RING.getActiveIndex() + 1);
+
+    if(USER_RING.getDirection() == "CW") { //CW = increasing index (counter to normal geometry), index "after" = +1
+      if(GAME_RING.getActiveIndex() == (USER_RING.getActiveIndex() - 1) || 
+         (GAME_RING.getActiveIndex() == 0 && USER_RING.getActiveIndex()  == 1)) {
+        if(SUCCESS == true) {
+          console.log("success");
+          SUCCESS = false;
+        } else {
+          //UNLESS the user pushed the space button / equivalent, (i.e. success flag goes true) they
+          //this results in failure, "case 2 failure"
+
+          console.log("failure"); 
+        } 
+        GAME_RING.nextInSeed();
+        USER_RING.shortestPath(GAME_RING.getActiveIndex());
+        USER_RING.changeDirectionShortest();
+        
+        //attempting to skip actually moving the LED to the next position via early shifting
+        if(USER_RING.getDirection() != "CW") {
+          USER_RING.shift();
+          USER_RING.shift();
+        }
+      }
+      //console.log("clockwise"); 
+    } else {
+   
+       if(GAME_RING.getActiveIndex() == (USER_RING.getActiveIndex() + 1)) { //decreasing index, for "after" subtract 1
+                                                                            //also backwards from what I would expect...
+                                                                            //because user ring previous position must match
+                                                                            //position of game ring in seed
+        if(SUCCESS == true) {
+          console.log("success");
+          SUCCESS = false;
+        } else {
+          //in current configuration (October 21st @1:45 AM...) failure will print twice if you're "early" to click,
+          //since game doesn't automatically end -- failure from early button push + possibly missing proper one 
+          console.log("failure"); 
+        }
+        GAME_RING.nextInSeed();
+        USER_RING.shortestPath(GAME_RING.getActiveIndex());
+        USER_RING.changeDirectionShortest(); 
+        //attempting to skip actually moving the LED to the next position via early shifting
+        if(USER_RING.getDirection() != "CCW") {
+          //running this command twice versus once prevents an extra time step for USER RING LED spent "lingering" in the
+          //current position
+          USER_RING.shift();
+          USER_RING.shift();
+        }
+      }
+      //console.log("counter-clockwise"); 
     }
     //USER_RING.blinkAll();
   }
