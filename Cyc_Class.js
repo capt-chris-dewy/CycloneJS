@@ -1,12 +1,13 @@
 
 export class LED {
-  constructor(color_on, color_off, radius, x, y, index) {
+  constructor(color_on, color_off, radius, x, y, index, p) {
     this.color_on = color_on;
     this.color_off = color_off;
     this.radius = radius;
     this.x = x;
     this.y = y;
-
+    this.index = index;
+    this.p = p; //p5js instance
     this.lit = 0;
   }
 
@@ -28,19 +29,19 @@ export class LED {
 
   drawLED() {
     if(this.lit) {
-      fill(this.color_on);
+      this.p.fill(this.color_on);
     } else {
-      fill(this.color_off);
+      this.p.fill(this.color_off);
     }
 
-    ellipse(this.x, this.y, this.radius*2.0, this.radius*2.0);
+    this.p.ellipse(this.x, this.y, this.radius*2.0, this.radius*2.0);
   }
   
 }
 
 export class LEDRing {
 
-  constructor(color_on, color_off, number, LED_radius, arc_separation, centerX, centerY) {
+  constructor(color_on, color_off, number, LED_radius, arc_separation, centerX, centerY, p) {
       
       this.color_on = color_on;
       this.color_off = color_off;
@@ -50,6 +51,9 @@ export class LEDRing {
       
       this.centerX = centerX;
       this.centerY = centerY;
+
+      //p5js instance
+      this.p = p;
 
       this.angle_spacing = 360.0/this.number;
       this.angle_radians = this.angle_spacing * (Math.PI/180.0);
@@ -123,13 +127,13 @@ export class LEDRing {
   shift() {
     this.LED_Array[this.activeIndex].off();
     let nextIndex = 0;
-    if(this.direction == "CCW") {
+    if(this.direction == "CW") {
       if(this.activeIndex == 0) {
         nextIndex = this.number - 1; //roll over from index 0 to index N-1
       } else {
         nextIndex = this.activeIndex - 1;
       }
-    } else if(this.direction == "CW") {
+    } else if(this.direction == "CCW") {
       if(this.activeIndex == (this.number - 1)) {
         nextIndex == 0; //roll over from N-1 back to 0 (I hope)
       } else {
@@ -158,13 +162,13 @@ export class LEDRing {
     //had to do this for shift logic above as well
 
     if(targetIndex > currentIndex) {
-      CCW_Distance = Math.abs(currentIndex + (highestIndex-targetIndex)); //roll over from 0, back to 47 -- could be shorter
-      CW_Distance = Math.abs(targetIndex - currentIndex);
+      CW_Distance = Math.abs(currentIndex + (highestIndex-targetIndex)); //roll over from 0, back to 47 -- could be shorter
+      CCW_Distance = Math.abs(targetIndex - currentIndex);
     }
     
     if(targetIndex < currentIndex) {
-      CCW_Distance = Math.abs(targetIndex - currentIndex);
-      CW_Distance = Math.abs(targetIndex + (highestIndex-currentIndex)); //roll over from 0, back to 47 -- could be shorter
+      CW_Distance = Math.abs(targetIndex - currentIndex);
+      CCW_Distance = Math.abs(targetIndex + (highestIndex-currentIndex)); //roll over from 0, back to 47 -- could be shorter
     }
 
     //console.log(CW_Distance);
@@ -214,7 +218,7 @@ export class LEDRing {
       current_x = this.centerX + current_xoff;
       current_y = this.centerY + current_yoff;
 
-      let temp_LED = new LED(this.color_on, this.color_off, this.LED_radius, current_x, current_y, i);
+      let temp_LED = new LED(this.color_on, this.color_off, this.LED_radius, current_x, current_y, i, this.p);
       this.LED_Array.push(temp_LED);
     }
 
