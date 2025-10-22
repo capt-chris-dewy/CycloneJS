@@ -82,6 +82,9 @@ window.setup = function() {
 	
   createCanvas(canvasWidth, canvasHeight);
 	background(150, 220, 255);
+
+  //attempting to change canvas, i.e. flip y-axis
+  scale(1, -1); //scales all future x axis draws by 1 (leave 'em alone), also future y axis draws by (-1)
   
   /*
   let start_button = createButton('START');

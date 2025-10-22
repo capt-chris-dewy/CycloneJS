@@ -142,7 +142,7 @@ export class LEDRing {
     this.activeIndex = nextIndex;
     this.LED_Array[this.activeIndex].on(); 
     
-    //console.log(this.activeIndex);
+    console.log(this.activeIndex);
   }
 
   shortestPath(targetIndex) {
@@ -181,6 +181,7 @@ export class LEDRing {
     } else {
       this.direction = "CCW";
     }
+    console.log("new direction = " + this.direction);
   }
 
   generateLEDs() {
