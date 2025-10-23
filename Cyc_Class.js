@@ -47,10 +47,15 @@ export class SegArray {
     for(var i = 0; i < this.num_seg; i++) {
       let ith_digit = numAsString[i];
       console.log("digit, i = " + i +  " = " + ith_digit);
-      let ith_digit_number = parseInt(ith_digit);
+      let ith_digit_number;
+      if(ith_digit == null) {
+        console.log("ith_digit is empty, placing zero for digit");
+        ith_digit_number = 0;
+      } else {
+        ith_digit_number = parseInt(ith_digit);
+      }
       this.seg_array[i].setNumber(ith_digit_number);
-      console.log("new number for segment " + i +  " = " + this.seg_array[i].getNumber());
-      
+      console.log("new number for segment " + i +  " = " + this.seg_array[i].getNumber()); 
     }
   }
 }

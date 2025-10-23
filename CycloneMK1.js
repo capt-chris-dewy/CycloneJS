@@ -73,7 +73,7 @@ let sketch = function(p) {
         //console.log("success");
         SUCCESS = true;
       } else {
-        //SUCCESS = false;
+        SUCCESS = false;
         
         //case 1 failure: the button has been selected at the wrong time, user input directly ends game
         console.log("failure");
@@ -186,6 +186,9 @@ let sketch = function(p) {
            ((USER_RING.getActiveIndex() == LEDS_PER_RING - 1) &&  (GAME_RING.getActiveIndex() == 0))) {
           if(SUCCESS == true) {
             console.log("success");
+            SUCCESS_COUNT++;
+            console.log(SUCCESS_COUNT);
+            SEG_ARR_OBJECT.updateNumbers(SUCCESS_COUNT);
             SUCCESS = false;
           } else {
             //UNLESS the user pushed the space button / equivalent, (i.e. success flag goes true) they
