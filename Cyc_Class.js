@@ -1,3 +1,60 @@
+export class SevenSeg {
+  constructor(xcenter, ycenter, xoffset, boxWidth, boxHeight, fontSize, p) {
+    this.xcenter = xcenter;
+    this.ycenter = ycenter;
+    this.xoffset = xoffset;
+    this.boxWidth = boxWidth;
+    this.boxHeight = boxHeight;
+    this.fontSize = fontSize;
+    this.p = p;
+    
+    this.number = 0;
+    this.background_color = p.color(100); //greyscale 100?
+    this.fontcolor = p.color(255, 255, 0); //orange... maybe
+  }
+
+  setNumber(nextNumber) {
+    this.number = nextNumber;
+  }
+
+  getNumber() {
+    return this.number;
+  }
+
+  drawSeg() {
+    this.p.rectMode(this.p.CENTER);
+    this.p.fill(this.background_color);
+    this.p.rect(this.xcenter + this.xoffset, this.ycenter, this.boxWidth, this.boxHeight);
+    
+    this.p.fill(this.fontcolor);
+    this.p.textFont('Courier New', this.fontSize);
+    this.p.text(this.number, ((this.xcenter + this.xoffset) - this.boxWidth/2), (this.ycenter + this.boxHeight/4));
+  }
+}
+
+export class SegArray {
+  constructor(seg_array) {
+    this.seg_array = seg_array;
+    this.num_seg = seg_array.length; //number of digits, i.e. 7-segment displays
+    this.number = 0; //number stored between all 7-segment displays
+  }
+
+  updateNumbers(nextNumber) {
+    this.number = nextNumber;
+    console.log("number = " + this.number);
+
+    let numAsString = String(this.number).split(''); //split up every single character of the number
+    for(var i = 0; i < this.num_seg; i++) {
+      let ith_digit = numAsString[i];
+      console.log("digit, i = " + i +  " = " + ith_digit);
+      let ith_digit_number = parseInt(ith_digit);
+      this.seg_array[i].setNumber(ith_digit_number);
+      console.log("new number for segment " + i +  " = " + this.seg_array[i].getNumber());
+      
+    }
+  }
+}
+
 
 export class LED {
   constructor(color_on, color_off, radius, x, y, index, p) {
@@ -146,7 +203,7 @@ export class LEDRing {
     this.activeIndex = nextIndex;
     this.LED_Array[this.activeIndex].on(); 
     
-    console.log(this.activeIndex);
+    //console.log(this.activeIndex);
   }
 
   shortestPath(targetIndex) {
@@ -185,7 +242,7 @@ export class LEDRing {
     } else {
       this.direction = "CCW";
     }
-    console.log("new direction = " + this.direction);
+    //console.log("new direction = " + this.direction);
   }
 
   generateLEDs() {

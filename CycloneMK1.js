@@ -1,4 +1,6 @@
 import { LEDRing } from './Cyc_Class.js';
+import { SevenSeg } from './Cyc_Class.js';
+import { SegArray } from './Cyc_Class.js';
 
 let sketch = function(p) {
   //canvas spec
@@ -32,8 +34,10 @@ let sketch = function(p) {
   var LED_RAD = 10;
   //WHEEL_RAD = 10
 
-  //SEG_W
-  //SEG_H
+  var SEG_W = 30;
+  var SEG_H = 50;
+  var SEG_OFF = 18;
+  var SEG_FONTSIZE = 50;
 
   var START_X = canvasWidth/2.0;
   var START_Y = canvasWidth*(3.0/4.0);
@@ -54,7 +58,13 @@ let sketch = function(p) {
   var USER_RING;
   var GAME_RING;
 
+  var SEG_A;
+  var SEG_B;
+
+  var SEG_ARR_OBJECT;
+
   var SUCCESS = false;
+  var SUCCESS_COUNT = 0;
 
   //intended callback function for when spacebar is pressed
   p.keyPressed = function() {
@@ -118,6 +128,13 @@ let sketch = function(p) {
     //comment so this thing updates? 
     GAME_RING.generateSeed();
     GAME_RING.initiateSeed();
+
+    //for 7-segment display
+    //constructor(xcenter, ycenter, xoffset, boxWidth, boxHeight, fontSize, p) {
+    SEG_A = new SevenSeg(centerWidth, centerHeight, SEG_OFF, SEG_W, SEG_H, SEG_FONTSIZE, p);
+    SEG_B = new SevenSeg(centerWidth, centerHeight, -1*SEG_OFF, SEG_W, SEG_H, SEG_FONTSIZE, p);
+    
+    SEG_ARR_OBJECT = new SegArray([SEG_A, SEG_B]);    
   }
 
   p.draw = function() {	 
@@ -138,11 +155,17 @@ let sketch = function(p) {
     p.background(150, 220, 255);
     GAME_RING.drawLEDs();
     USER_RING.drawLEDs(); 
-    
     //test of new origin center
     //p.fill(255, 0, 0);
     //p.ellipse(0, 0, 20, 20);
     
+    p.pop();
+
+    //for unflipping the text in this 7-segment displays, same origin translation minus the scaling
+    p.push();
+    p.translate(canvasWidth/2, canvasHeight/2);
+    SEG_A.drawSeg();
+    SEG_B.drawSeg();
     p.pop();
     
     if(drawCounts % parseInt(BLINK_PERIOD_DRAWS/2) == 0) {
@@ -187,6 +210,9 @@ let sketch = function(p) {
           
           if(SUCCESS == true) {
             console.log("success");
+            SUCCESS_COUNT++;
+            console.log(SUCCESS_COUNT);
+            SEG_ARR_OBJECT.updateNumbers(SUCCESS_COUNT);
             SUCCESS = false;
           } else {
             //in current configuration (October 21st @1:45 AM...) failure will print twice if you're "early" to click,
